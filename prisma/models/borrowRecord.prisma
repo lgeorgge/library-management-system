@@ -1,0 +1,17 @@
+model BorrowRecord {
+  id String @id @default(uuid()) @db.Uuid
+
+  borrowedAt DateTime  @default(now())
+  dueDate    DateTime
+  returnedAt DateTime?
+
+  bookId String @db.Uuid
+  book   Book   @relation(fields: [bookId], references: [id], onDelete: Restrict)
+
+  borrowerId String   @db.Uuid
+  borrower   Borrower @relation(fields: [borrowerId], references: [id], onDelete: Restrict)
+
+  @@index([borrowerId, returnedAt])
+  @@index([bookId, returnedAt])
+  @@index([dueDate, returnedAt])
+}
