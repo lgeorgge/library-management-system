@@ -16,6 +16,6 @@ import { PrismaModule } from '../../../common/prisma/prisma.module';
       useExisting: BookRepository,
     },
   ],
-  exports: [BooksService],
+  exports: [BooksService, BOOK_REPOSITORY],
 })
 export class BooksModule {}
