@@ -1,5 +1,9 @@
 import { Injectable } from '@nestjs/common';
-import { IBorrowingRepository } from '../../domain/ports/borrowing.port';
+import {
+  BorrowingReportRecord,
+  BorrowingScopeType,
+  IBorrowingRepository,
+} from '../../domain/ports/borrowing.port';
 import { PrismaService } from '../../../../common/prisma/prisma.service';
 
 @Injectable()
@@ -165,6 +169,44 @@ export class BorrowingRepository implements IBorrowingRepository {
         returnedAt: null,
       },
       select: { id: true },
+    });
+  }
+
+  async findBorrowings(
+    from: Date,
+    to: Date,
+    scope: BorrowingScopeType,
+  ): Promise<BorrowingReportRecord[]> {
+    return this.prisma.borrowRecord.findMany({
+      where: {
+        borrowedAt: {
+          gte: from,
+          lte: to,
+        },
+        ...(scope === 'overdue'
+          ? {
+              returnedAt: null,
+              dueDate: { lt: new Date() },
+            }
+          : {}),
+      },
+      include: {
+        book: {
+          select: {
+            title: true,
+            isbn: true,
+          },
+        },
+        borrower: {
+          select: {
+            name: true,
+            email: true,
+          },
+        },
+      },
+      orderBy: {
+        borrowedAt: 'desc',
+      },
     });
   }
 }

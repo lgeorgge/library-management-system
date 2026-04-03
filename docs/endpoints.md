@@ -81,13 +81,12 @@ Base route: `/api/books`
 {
   "books": [
     {
-      "id": "book-uuid",
-      "title": "Clean Code",
-      "author": "Robert C. Martin",
-      "isbn": "9780132350884",
+      "title": "Nader Fouda - Al-Athem",
+      "author": "Ahmed Youness",
+      "isbn": "9784651325014",
       "shelfLocation": "A-1",
-      "totalQuantity": 5,
-      "availableQuantity": 3
+      "totalQuantity": 100,
+      "availableQuantity": 95
     }
   ],
   "total": 1
@@ -104,13 +103,12 @@ Base route: `/api/books`
 
 ```json
 {
-  "id": "book-uuid",
-  "title": "Clean Code",
-  "author": "Robert C. Martin",
-  "isbn": "9780132350884",
+  "title": "Nader Fouda - Al-Athem",
+  "author": "Ahmed Youness",
+  "isbn": "9784651325014",
   "shelfLocation": "A-1",
-  "totalQuantity": 5,
-  "availableQuantity": 3
+  "totalQuantity": 100,
+  "availableQuantity": 95
 }
 ```
 
@@ -140,7 +138,8 @@ Base route: `/api/books`
 
 ```json
 {
-  "id": "book-uuid"
+  "id": "book-uuid",
+  "availableQuantity": 95
 }
 ```
 
@@ -379,3 +378,75 @@ Base route: `/api/borrowing`
   }
 ]
 ```
+
+## Borrowing Reports Module
+
+Controller: `BorrowingReportsController`  
+Base route: `/api/borrowing-reports`
+
+### 1. Get Borrowing Report (Analytics + Items)
+
+- **Method:** `GET`
+- **Path:** `/api/borrowing-reports`
+- **Query params (required):**
+- `from`: ISO date string (example: `2026-03-01`)
+- `to`: ISO date string (example: `2026-03-31`)
+- **Response (200):**
+
+```json
+{
+  "from": "2026-03-01T00:00:00.000Z",
+  "to": "2026-03-31T23:59:59.999Z",
+  "totals": {
+    "totalBorrowings": 25,
+    "returnedCount": 18,
+    "activeCount": 7,
+    "overdueCount": 3,
+    "uniqueBorrowers": 10,
+    "uniqueBooks": 14
+  },
+  "items": [
+    {
+      "id": "borrow-record-uuid",
+      "borrowedAt": "2026-03-12T09:00:00.000Z",
+      "dueDate": "2026-03-26T09:00:00.000Z",
+      "returnedAt": null,
+      "borrower": {
+        "name": "John Doe",
+        "email": "john@example.com"
+      },
+      "book": {
+        "title": "Clean Code",
+        "isbn": "9780132350884"
+      },
+      "status": "overdue"
+    }
+  ]
+}
+```
+
+### 2. Export Borrowing Report (XLSX)
+
+- **Method:** `GET`
+- **Path:** `/api/borrowing-reports/export`
+- **Query params (required):**
+- `from`: ISO date string
+- `to`: ISO date string
+- `scope`: `all` | `overdue`
+- `format`: `xlsx`
+- **Response (200):**
+- Binary file stream (`.xlsx`)
+- `Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`
+- `Content-Disposition: attachment; filename="borrowing-report-... .xlsx"`
+
+### 3. Export Last Month Borrowing Report (XLSX)
+
+- **Method:** `GET`
+- **Path:** `/api/borrowing-reports/export/last-month`
+- **Query params (optional):**
+- `scope`: `all` | `overdue` (default: `all`)
+- `format`: `xlsx` (default: `xlsx`)
+- **Response (200):**
+- Binary file stream (`.xlsx`)
+- `Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`
+- `Content-Disposition: attachment; filename="borrowing-report-last-month-... .xlsx"`

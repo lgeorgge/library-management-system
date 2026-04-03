@@ -1,34 +1,11 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+**_ Please note _**
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
-
-## Project setup
+- I used onion architecure for the whole project.
+- Please make sure to use nvm 20 becuase nest has problems running on version 22
+- Thnaks in advance, happy reviewing
 
 ```bash
-$ npm install
+$ npm install or npm i
 ```
 
 ## Compile and run the project
@@ -40,8 +17,6 @@ $ npm run start
 # watch mode
 $ npm run start:dev
 
-# production mode
-$ npm run start:prod
 ```
 
 ## Run tests
@@ -50,49 +25,466 @@ $ npm run start:prod
 # unit tests
 $ npm run test
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+# book module test
+$ npm run test -- book.service.spec.ts
 ```
 
-## Deployment
+## API enpoints docs
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+# Library Management System API Endpoints
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+Base URL prefix: `/api`
 
-```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+Validation is enabled globally with:
+
+- `whitelist: true` (unknown properties are stripped)
+- `forbidNonWhitelisted: true` (unknown properties trigger validation errors)
+- `transform: true`
+
+## Books Module
+
+Controller: `BooksController`  
+Base route: `/api/books`
+
+### 1. Create Book
+
+- **Method:** `POST`
+- **Path:** `/api/books`
+- **Body:**
+
+```json
+{
+  "title": "string",
+  "author": "string",
+  "isbn": "string",
+  "shelfLocation": "string",
+  "totalQuantity": 3
+}
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+- **Rules:**
+- `title`, `author`, `isbn`, `shelfLocation` are required non-empty strings.
+- `totalQuantity` is required integer and must be `>= 0`.
+- ISBN must be unique.
+- `availableQuantity` is set automatically to `totalQuantity`.
+- **Response (201):**
 
-## Resources
+```json
+{
+  "id": "book-uuid"
+}
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+### 2. Get All Books
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+- **Method:** `GET`
+- **Path:** `/api/books`
+- **Query params:** none
+- **Response (200):**
 
-## Support
+```json
+{
+  "books": [
+    {
+      "id": "book-uuid",
+      "title": "Clean Code",
+      "author": "Robert C. Martin",
+      "isbn": "9780132350884",
+      "shelfLocation": "A-1",
+      "totalQuantity": 5,
+      "availableQuantity": 3
+    }
+  ],
+  "total": 1
+}
+```
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+### 3. Search Books
 
-## Stay in touch
+- **Method:** `GET`
+- **Path:** `/api/books/search`
+- **Query params (optional individually, but at least one required):**
+- `title`: string
+- `author`: string
+- `isbn`: string
+- **Rules:**
+- Request fails if none of the query params are provided.
+- **Response (200):**
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+```json
+{
+  "books": [
+    {
+      "title": "Nader Fouda - Al-Athem",
+      "author": "Ahmed Youness",
+      "isbn": "9784651325014",
+      "shelfLocation": "A-1",
+      "totalQuantity": 100,
+      "availableQuantity": 95
+    }
+  ],
+  "total": 1
+}
+```
 
-## License
+### 4. Get Book By ID
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+- **Method:** `GET`
+- **Path:** `/api/books/:id`
+- **Path params:**
+- `id`: string
+- **Response (200):**
+
+```json
+{
+  "title": "Nader Fouda - Al-Athem",
+  "author": "Ahmed Youness",
+  "isbn": "9784651325014",
+  "shelfLocation": "A-1",
+  "totalQuantity": 100,
+  "availableQuantity": 95
+}
+```
+
+### 5. Update Book
+
+- **Method:** `PATCH`
+- **Path:** `/api/books/:id`
+- **Path params:**
+- `id`: string
+- **Body (all fields optional):**
+
+```json
+{
+  "title": "string",
+  "author": "string",
+  "isbn": "string",
+  "shelfLocation": "string",
+  "totalQuantity": 0
+}
+```
+
+- **Rules:**
+- Updated ISBN must remain unique.
+- `totalQuantity` cannot be less than currently borrowed copies.
+- `availableQuantity` is recalculated automatically when `totalQuantity` changes.
+- **Response (200):**
+
+```json
+{
+  "id": "book-uuid",
+  "availableQuantity": 95
+}
+```
+
+### 6. Delete Book
+
+- **Method:** `DELETE`
+- **Path:** `/api/books/:id`
+- **Path params:**
+- `id`: string
+- **Rules:**
+- Cannot delete while any copies are currently borrowed.
+- **Response (200):**
+
+```json
+{
+  "message": "Book deleted successfully."
+}
+```
+
+## Borrowers Module
+
+Controller: `BorrowersController`  
+Base route: `/api/borrowers`
+
+### 1. Create Borrower
+
+- **Method:** `POST`
+- **Path:** `/api/borrowers`
+- **Body:**
+
+```json
+{
+  "name": "string",
+  "email": "user@example.com",
+  "registeredAt": "2026-01-01T00:00:00.000Z"
+}
+```
+
+- **Rules:**
+- `name` is required non-empty string.
+- `email` is required valid email and must be unique.
+- `registeredAt` is required valid ISO date string.
+- **Response (201):**
+
+```json
+{
+  "id": "borrower-uuid"
+}
+```
+
+### 2. Get All Borrowers
+
+- **Method:** `GET`
+- **Path:** `/api/borrowers`
+- **Query params (all optional):**
+- `page`: number (default `1`, min `1`)
+- `pageSize`: number (default `10`, min `1`, max `100`)
+- `search`: string
+- **Response (200):**
+
+```json
+{
+  "borrowers": [
+    {
+      "id": "borrower-uuid",
+      "name": "John Doe",
+      "email": "john@example.com",
+      "registeredAt": "2026-01-01T00:00:00.000Z"
+    }
+  ],
+  "total": 1
+}
+```
+
+### 3. Get Borrower By ID
+
+- **Method:** `GET`
+- **Path:** `/api/borrowers/:id`
+- **Path params:**
+- `id`: string
+- **Response (200):**
+
+```json
+{
+  "id": "borrower-uuid",
+  "name": "John Doe",
+  "email": "john@example.com",
+  "registeredAt": "2026-01-01T00:00:00.000Z"
+}
+```
+
+### 4. Update Borrower
+
+- **Method:** `PATCH`
+- **Path:** `/api/borrowers/:id`
+- **Path params:**
+- `id`: string
+- **Body (all fields optional):**
+
+```json
+{
+  "name": "string",
+  "email": "user@example.com"
+}
+```
+
+- **Rules:**
+- If email is updated, it must remain unique.
+- **Response (200):**
+
+```json
+{
+  "id": "borrower-uuid"
+}
+```
+
+### 5. Delete Borrower
+
+- **Method:** `DELETE`
+- **Path:** `/api/borrowers/:id`
+- **Path params:**
+- `id`: string
+- **Rules:**
+- Cannot delete borrower with active borrowed books.
+- **Response (200):**
+
+```json
+{
+  "message": "Borrower deleted successfully."
+}
+```
+
+## Borrowing Module
+
+Controller: `BorrowingController`  
+Base route: `/api/borrowing`
+
+### 1. Checkout Book
+
+- **Method:** `POST`
+- **Path:** `/api/borrowing/checkout`
+- **Body:**
+
+```json
+{
+  "borrowerId": "uuid",
+  "bookId": "uuid",
+  "dueDate": "2026-12-31T00:00:00.000Z"
+}
+```
+
+- **Rules:**
+- `borrowerId` and `bookId` must be valid UUIDs.
+- `dueDate` must be valid ISO date string in the future.
+- Borrower must exist.
+- Book must exist and have available copies.
+- Borrower cannot check out the same book twice at the same time.
+- **Response (201):**
+
+```json
+{
+  "id": "borrow-record-uuid"
+}
+```
+
+### 2. Return Book
+
+- **Method:** `POST`
+- **Path:** `/api/borrowing/return`
+- **Body:**
+
+```json
+{
+  "borrowerId": "uuid",
+  "bookId": "uuid"
+}
+```
+
+- **Rules:**
+- `borrowerId` and `bookId` must be valid UUIDs.
+- Borrower and book must exist.
+- There must be an active borrow record for this borrower/book pair.
+- **Response (201):**
+
+```json
+{
+  "id": "borrow-record-uuid"
+}
+```
+
+### 3. Get Overdue Borrows
+
+- **Method:** `GET`
+- **Path:** `/api/borrowing/overdue`
+- **Response (200):**
+
+```json
+[
+  {
+    "id": "borrow-record-uuid",
+    "borrowedAt": "2026-02-01T10:00:00.000Z",
+    "dueDate": "2026-02-14T10:00:00.000Z",
+    "borrower": {
+      "id": "borrower-uuid",
+      "name": "John Doe",
+      "email": "john@example.com"
+    },
+    "book": {
+      "id": "book-uuid",
+      "title": "Clean Code",
+      "author": "Robert C. Martin",
+      "isbn": "9780132350884"
+    }
+  }
+]
+```
+
+### 4. Get Active Borrows By Borrower
+
+- **Method:** `GET`
+- **Path:** `/api/borrowing/borrower/:borrowerId`
+- **Path params:**
+- `borrowerId`: string
+- **Rules:**
+- Borrower must exist.
+- **Response (200):**
+
+```json
+[
+  {
+    "id": "borrow-record-uuid",
+    "borrowedAt": "2026-03-01T10:00:00.000Z",
+    "dueDate": "2026-03-15T10:00:00.000Z",
+    "book": {
+      "id": "book-uuid",
+      "title": "Clean Code",
+      "author": "Robert C. Martin",
+      "isbn": "9780132350884"
+    }
+  }
+]
+```
+
+## Borrowing Reports Module
+
+Controller: `BorrowingReportsController`  
+Base route: `/api/borrowing-reports`
+
+### 1. Get Borrowing Report (Analytics + Items)
+
+- **Method:** `GET`
+- **Path:** `/api/borrowing-reports`
+- **Query params (required):**
+- `from`: ISO date string (example: `2026-03-01`)
+- `to`: ISO date string (example: `2026-03-31`)
+- **Response (200):**
+
+```json
+{
+  "from": "2026-03-01T00:00:00.000Z",
+  "to": "2026-03-31T23:59:59.999Z",
+  "totals": {
+    "totalBorrowings": 25,
+    "returnedCount": 18,
+    "activeCount": 7,
+    "overdueCount": 3,
+    "uniqueBorrowers": 10,
+    "uniqueBooks": 14
+  },
+  "items": [
+    {
+      "id": "borrow-record-uuid",
+      "borrowedAt": "2026-03-12T09:00:00.000Z",
+      "dueDate": "2026-03-26T09:00:00.000Z",
+      "returnedAt": null,
+      "borrower": {
+        "name": "John Doe",
+        "email": "john@example.com"
+      },
+      "book": {
+        "title": "Clean Code",
+        "isbn": "9780132350884"
+      },
+      "status": "overdue"
+    }
+  ]
+}
+```
+
+### 2. Export Borrowing Report (XLSX)
+
+- **Method:** `GET`
+- **Path:** `/api/borrowing-reports/export`
+- **Query params (required):**
+- `from`: ISO date string
+- `to`: ISO date string
+- `scope`: `all` | `overdue`
+- `format`: `xlsx`
+- **Response (200):**
+- Binary file stream (`.xlsx`)
+- `Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`
+- `Content-Disposition: attachment; filename="borrowing-report-... .xlsx"`
+
+### 3. Export Last Month Borrowing Report (XLSX)
+
+- **Method:** `GET`
+- **Path:** `/api/borrowing-reports/export/last-month`
+- **Query params (optional):**
+- `scope`: `all` | `overdue` (default: `all`)
+- `format`: `xlsx` (default: `xlsx`)
+- **Response (200):**
+- Binary file stream (`.xlsx`)
+- `Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet`
+- `Content-Disposition: attachment; filename="borrowing-report-last-month-... .xlsx"`

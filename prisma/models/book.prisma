@@ -12,4 +12,5 @@ model Book {
 
   @@index([title])
   @@index([author])
+  
 }

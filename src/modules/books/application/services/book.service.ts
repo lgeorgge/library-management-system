@@ -38,8 +38,11 @@ export class BooksService {
     }
   }
 
-  async findAll() {
-    return this.bookRepository.findAll();
+  async findAll(
+    pagination: { page: number; pageSize: number },
+    filters: { search?: string },
+  ) {
+    return this.bookRepository.findAll(pagination, filters);
   }
 
   async findOne(id: string) {

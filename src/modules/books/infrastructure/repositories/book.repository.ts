@@ -29,22 +29,27 @@ export class BookRepository implements IBookRepository {
   }
 
   async findAll(
-    pagination?: { page: number; pageSize: number },
-    orderBy?: { field: string; direction: 'asc' | 'desc' },
+    pagination: { page: number; pageSize: number },
+    filters: { search?: string },
   ) {
+    const where: Prisma.BookWhereInput = {};
+    if (filters.search) {
+      where.OR = [
+        { title: { contains: filters.search, mode: 'insensitive' } },
+        { author: { contains: filters.search, mode: 'insensitive' } },
+        { isbn: { contains: filters.search, mode: 'insensitive' } },
+      ];
+    }
+
     const [books, total] = await Promise.all([
       this.prisma.book.findMany({
-        skip: pagination
-          ? (pagination.page - 1) * pagination.pageSize
-          : undefined,
-        take: pagination?.pageSize,
-        orderBy: orderBy
-          ? {
-              [orderBy.field]: orderBy.direction,
-            }
-          : {
-              title: 'asc',
-            },
+        where,
+        skip: (pagination.page - 1) * pagination.pageSize,
+
+        take: pagination.pageSize,
+        orderBy: {
+          title: 'asc',
+        },
         select: {
           id: true,
           title: true,

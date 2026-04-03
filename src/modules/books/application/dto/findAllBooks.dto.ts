@@ -1,3 +1,3 @@
 import { FindAllDto } from '../../../../common/dto/findAll.dto';
 
-export class FindAllBorrowersDto extends FindAllDto {}
+export class FindAllBooksDto extends FindAllDto {}

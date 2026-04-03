@@ -1,5 +1,22 @@
 export const BORROWING_REPOSITORY = Symbol('BORROWING_REPOSITORY');
 
+export type BorrowingScopeType = 'all' | 'overdue';
+
+export type BorrowingReportRecord = {
+  id: string;
+  borrowedAt: Date;
+  dueDate: Date;
+  returnedAt: Date | null;
+  book: {
+    title: string;
+    isbn: string;
+  };
+  borrower: {
+    name: string;
+    email: string;
+  };
+};
+
 export interface IBorrowingRepository {
   checkout(data: {
     borrowerId: string;
@@ -52,4 +69,10 @@ export interface IBorrowingRepository {
     borrowerId: string;
     bookId: string;
   }): Promise<{ id: string } | null>;
+
+  findBorrowings(
+    from: Date,
+    to: Date,
+    scope: BorrowingScopeType,
+  ): Promise<BorrowingReportRecord[]>;
 }

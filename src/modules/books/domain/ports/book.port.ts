@@ -11,8 +11,8 @@ export interface IBookRepository {
   }): Promise<{ id: string }>;
 
   findAll(
-    pagination?: { page: number; pageSize: number },
-    orderBy?: { field: string; direction: 'asc' | 'desc' },
+    pagination: { page: number; pageSize: number },
+    filters: { search?: string },
   ): Promise<{
     books: {
       id: string;
