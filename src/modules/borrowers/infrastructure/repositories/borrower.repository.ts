@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IBorrowerRepository } from '../../domain/ports/borrower.port';
 import { PrismaService } from '../../../../common/prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class BorrowerRepository implements IBorrowerRepository {
@@ -17,7 +18,10 @@ export class BorrowerRepository implements IBorrowerRepository {
     });
   }
 
-  async findAll(): Promise<{
+  async findAll(
+    pagination: { page: number; pageSize: number },
+    filters: { search: string | undefined },
+  ): Promise<{
     borrowers: {
       id: string;
       name: string;
@@ -26,6 +30,15 @@ export class BorrowerRepository implements IBorrowerRepository {
     }[];
     total: number;
   }> {
+    const where: Prisma.BorrowerWhereInput = {};
+
+    if (filters.search) {
+      where.OR = [
+        { name: { contains: filters.search, mode: 'insensitive' } },
+        { email: { contains: filters.search, mode: 'insensitive' } },
+      ];
+    }
+
     const [borrowers, total] = await Promise.all([
       this.prisma.borrower.findMany({
         orderBy: { name: 'asc' },
@@ -35,8 +48,12 @@ export class BorrowerRepository implements IBorrowerRepository {
           email: true,
           registeredAt: true,
         },
+        skip: pagination ? pagination.page * pagination.pageSize : undefined,
+        take: pagination ? pagination.pageSize : undefined,
       }),
-      this.prisma.borrower.count(),
+      this.prisma.borrower.count({
+        where,
+      }),
     ]);
 
     return { borrowers, total };

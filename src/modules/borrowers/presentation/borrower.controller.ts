@@ -4,12 +4,14 @@ import {
   Delete,
   Get,
   Param,
-  Patch,
   Post,
+  Put,
+  Query,
 } from '@nestjs/common';
 import { BorrowersService } from '../application/services/borrower.service';
 import { CreateBorrowerDto } from '../application/dto/createBorrower.dto';
 import { UpdateBorrowerDto } from '../application/dto/updateBorrower.dto';
+import { FindAllBorrowersDto } from '../application/dto/findAllBorrowers.dto';
 
 @Controller('borrowers')
 export class BorrowersController {
@@ -21,8 +23,12 @@ export class BorrowersController {
   }
 
   @Get()
-  findAll() {
-    return this.borrowersService.findAll();
+  findAll(@Query() query: FindAllBorrowersDto) {
+    const { page, pageSize, search } = query;
+
+    const pagination = { page, pageSize };
+    const filters = { search };
+    return this.borrowersService.findAll(pagination, filters);
   }
 
   @Get(':id')
@@ -30,8 +36,11 @@ export class BorrowersController {
     return this.borrowersService.findOne(id);
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateBorrowerDto: UpdateBorrowerDto) {
+  @Put(':id')
+  update(
+    @Param('id') id: string,
+    @Body() updateBorrowerDto: UpdateBorrowerDto,
+  ) {
     return this.borrowersService.update(id, updateBorrowerDto);
   }
 

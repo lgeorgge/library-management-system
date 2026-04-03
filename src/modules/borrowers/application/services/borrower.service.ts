@@ -23,9 +23,7 @@ export class BorrowersService {
     );
 
     if (existing) {
-      throw new ConflictException(
-        'A borrower with this email already exists.',
-      );
+      throw new ConflictException('A borrower with this email already exists.');
     }
 
     try {
@@ -41,8 +39,11 @@ export class BorrowersService {
     }
   }
 
-  async findAll() {
-    return this.borrowerRepository.findAll();
+  async findAll(
+    pagination: { page: number | undefined; pageSize: number | undefined },
+    filters: { search: string | undefined },
+  ) {
+    return this.borrowerRepository.findAll(pagination, filters);
   }
 
   async findOne(id: string) {

@@ -116,11 +116,14 @@ export class BookRepository implements IBookRepository {
     return { books, total };
   }
 
-  async update(id: string, data: UpdateBookDto): Promise<{ id: string }> {
+  async update(
+    id: string,
+    data: UpdateBookDto,
+  ): Promise<{ id: string; availableQuantity: number }> {
     return await this.prisma.book.update({
       where: { id },
       data,
-      select: { id: true },
+      select: { id: true, availableQuantity: true },
     });
   }
 

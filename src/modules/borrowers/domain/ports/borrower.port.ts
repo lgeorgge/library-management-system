@@ -7,7 +7,10 @@ export interface IBorrowerRepository {
     registeredAt: Date;
   }): Promise<{ id: string }>;
 
-  findAll(): Promise<{
+  findAll(
+    pagination: { page: number | undefined; pageSize: number | undefined },
+    filters: { search: string | undefined },
+  ): Promise<{
     borrowers: {
       id: string;
       name: string;

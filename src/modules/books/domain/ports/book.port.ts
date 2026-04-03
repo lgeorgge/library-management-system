@@ -64,7 +64,7 @@ export interface IBookRepository {
       totalQuantity: number;
       availableQuantity: number;
     }>,
-  ): Promise<{ id: string }>;
+  ): Promise<{ id: string; availableQuantity: number }>;
 
   delete(id: string): Promise<{ id: string }>;
 }
