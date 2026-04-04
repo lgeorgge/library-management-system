@@ -6,6 +6,7 @@
 
 ```bash
 $ npm install or npm i
+$ npx prisma generate
 ```
 
 ## Compile and run the project
