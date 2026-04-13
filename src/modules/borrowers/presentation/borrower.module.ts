@@ -14,6 +14,6 @@ import { BORROWER_REPOSITORY } from '../domain/ports/borrower.port';
       useExisting: BorrowerRepository,
     },
   ],
-  exports: [BorrowersService],
+  exports: [BorrowersService, BORROWER_REPOSITORY],
 })
 export class BorrowersModule {}
