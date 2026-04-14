@@ -43,7 +43,7 @@ export class BorrowersService {
     pagination: { page: number | undefined; pageSize: number | undefined },
     filters: { search: string | undefined },
   ) {
-    return this.borrowerRepository.findAll(pagination, filters);
+    return await this.borrowerRepository.findAll(pagination, filters);
   }
 
   async findOne(id: string) {

@@ -41,6 +41,7 @@ export class BorrowerRepository implements IBorrowerRepository {
 
     const [borrowers, total] = await Promise.all([
       this.prisma.borrower.findMany({
+        where,
         orderBy: { name: 'asc' },
         select: {
           id: true,
@@ -48,8 +49,6 @@ export class BorrowerRepository implements IBorrowerRepository {
           email: true,
           registeredAt: true,
         },
-        skip: pagination ? pagination.page * pagination.pageSize : undefined,
-        take: pagination ? pagination.pageSize : undefined,
       }),
       this.prisma.borrower.count({
         where,

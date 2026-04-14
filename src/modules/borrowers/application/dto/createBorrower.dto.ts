@@ -11,5 +11,5 @@ export class CreateBorrowerDto {
 
   @IsDateString()
   @IsNotEmpty()
-  registeredAt!: string;
+  registeredAt: string = new Date().toISOString();
 }
